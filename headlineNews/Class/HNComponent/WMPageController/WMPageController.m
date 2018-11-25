@@ -357,6 +357,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
         [vc removeFromParentViewController];
     }
     self.memoryWarningCount = 0;
+    //取消已设置的延迟执行
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(wm_growCachePolicyAfterMemoryWarning) object:nil];
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(wm_growCachePolicyToHigh) object:nil];
     self.currentViewController = nil;
@@ -412,18 +413,21 @@ static NSInteger const kWMControllerCountUndefined = -1;
     self.delegate = self;
     self.dataSource = self;
     
+    //从活动状态进入非活动状态
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(willResignActive:) name:UIApplicationWillResignActiveNotification object:nil];
+    //程序进入前台，但是还没有处于活动状态时调用。
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(willEnterForeground:) name:UIApplicationWillEnterForegroundNotification object:nil];
 }
 
 // 包括宽高，子控制器视图 frame
 - (void)wm_calculateSize {
     CGFloat navigationHeight = CGRectGetMaxY(self.navigationController.navigationBar.frame);
-    UIView *tabBar = [self wm_bottomView];
+    UIView *tabBar = [self                                                        wm_bottomView];
     CGFloat height = (tabBar && !tabBar.hidden) ? CGRectGetHeight(tabBar.frame) : 0;
     CGFloat tarBarHeight = (self.hidesBottomBarWhenPushed == YES) ? 0 : height;
     // 计算相对 window 的绝对 frame (self.view.window 可能为 nil)
     UIWindow *mainWindow = [[UIApplication sharedApplication].delegate window];
+    //将rect从view中转换到当前视图中，返回在当前视图中的rect
     CGRect absoluteRect = [self.view convertRect:self.view.bounds toView:mainWindow];
     navigationHeight -= absoluteRect.origin.y;
     tarBarHeight -= mainWindow.frame.size.height - CGRectGetMaxY(absoluteRect);
@@ -432,6 +436,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
     _viewY = self.viewFrame.origin.y;
     if (CGRectEqualToRect(self.viewFrame, CGRectZero)) {
         _viewWidth = self.view.frame.size.width;
+        //获得内容视图高度
         _viewHeight = self.view.frame.size.height - self.menuHeight - self.menuViewBottomSpace - navigationHeight - tarBarHeight;
         _viewY += navigationHeight;
     } else {
@@ -556,6 +561,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
     [self addChildViewController:viewController];
     CGRect frame = self.childViewFrames.count ? [self.childViewFrames[index] CGRectValue] : self.view.frame;
     viewController.view.frame = frame;
+    //当从一个视图控制容器中添加或者移除viewController后，该方法被调用
     [viewController didMoveToParentViewController:self];
     [self.scrollView addSubview:viewController.view];
     [self willEnterController:viewController atIndex:index];
@@ -763,8 +769,9 @@ static NSInteger const kWMControllerCountUndefined = -1;
     
     BOOL shouldNotLayout = (_hasInited && _superviewHeight == oldSuperviewHeight && _isTabBarHidden == oldTabBarIsHidden);
     if (shouldNotLayout) return;
-    // 计算宽高及子控制器的视图frame
+    // 计算宽高及子控制器的视图frame,也就是滚动视图的frame
     [self wm_calculateSize];
+    //初始化scrollView中的view的位置
     [self wm_adjustScrollViewFrame];
     [self wm_adjustMenuViewFrame];
     [self wm_adjustDisplayingViewControllersFrame];

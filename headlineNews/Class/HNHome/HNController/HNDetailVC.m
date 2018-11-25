@@ -60,6 +60,7 @@
         tableView.dataSource = self;
         tableView.estimatedRowHeight = 152;
         tableView.rowHeight = UITableViewAutomaticDimension;
+        //消除分割线
         tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         [self.view addSubview:tableView];
         [tableView mas_makeConstraints:^(MASConstraintMaker *make) {

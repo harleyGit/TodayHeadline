@@ -13,6 +13,7 @@
 @implementation HNURLManager
 
 + (NSString *)homeTitleURLString {
+    //https://is.snssdk.com/article/category/get_subscribed/v1/?
     return [NSString stringWithFormat:@"%@article/category/get_subscribed/v1/?",HN_BASE_URL];
 }
 

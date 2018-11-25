@@ -109,6 +109,8 @@
     }
 }
 
+
+//重写打印输出格式：https://blog.csdn.net/yuner1029/article/details/50933945
 - (NSString *)description {
     NSData *data = [NSJSONSerialization dataWithJSONObject:[self params] options:NSJSONWritingPrettyPrinted error:nil];
     return [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];

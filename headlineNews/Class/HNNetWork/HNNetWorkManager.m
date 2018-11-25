@@ -18,6 +18,7 @@ static const float timeOut = 10.0;
 
 + (AFHTTPSessionManager *)manager {
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    //表示已json形式，返回数据，默认为该样式
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     manager.requestSerializer = [AFJSONRequestSerializer serializer];
     [manager.requestSerializer willChangeValueForKey:@"timeoutInterval"];
@@ -28,7 +29,7 @@ static const float timeOut = 10.0;
 }
 
 + (NSURLSessionDataTask *)postRequestWithURLString:(NSString *)URLString parameters:(NSDictionary *)parameters success:(SuccessHandle)success failure:(failureHandle)failure {
-
+    //对汉字进行转码
     URLString = [URLString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     return [self.manager POST:URLString parameters:parameters progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         if (success) {
