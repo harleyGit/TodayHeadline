@@ -24,7 +24,7 @@ typedef NS_ENUM(NSInteger, WMPageControllerCachePolicy) {
     WMPageControllerCachePolicyDisabled   = -1,  // Disable Cache
     WMPageControllerCachePolicyNoLimit    = 0,   // No limit
     WMPageControllerCachePolicyLowMemory  = 1,   // Low Memory but may block when scroll
-    WMPageControllerCachePolicyBalanced   = 3,   // Balanced ↑ and ↓
+    WMPageControllerCachePolicyBalanced   = 3,   // Balanced ↑ and ↓//缓存策略平衡
     WMPageControllerCachePolicyHigh       = 5    // High
 };
 

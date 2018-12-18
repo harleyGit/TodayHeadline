@@ -10,7 +10,7 @@
 
 @interface WMMenuView () 
 @property (nonatomic, weak) WMMenuItem *selItem;
-@property (nonatomic, strong) NSMutableArray *frames;
+@property (nonatomic, strong) NSMutableArray *frames;//每个item的的frame值
 @property (nonatomic, readonly) NSInteger titlesCount;
 @property (nonatomic, assign) NSInteger selectIndex;
 @end
@@ -140,7 +140,7 @@ static NSInteger const WMBadgeViewTagOffset = 1212;
     }
     return _frames;
 }
-
+//item的title在选中和未选中的颜色变化
 - (UIColor *)colorForState:(WMMenuItemState)state atIndex:(NSInteger)index {
     if ([self.delegate respondsToSelector:@selector(menuView:titleColorForState:atIndex:)]) {
         return [self.delegate menuView:self titleColorForState:state atIndex:index];
@@ -305,7 +305,7 @@ static NSInteger const WMBadgeViewTagOffset = 1212;
 }
 
 - (void)resetFrames {
-    CGRect frame = self.bounds;
+    CGRect frame = self.bounds;//Menu的frame赋值
     if (self.rightView) {
         CGRect rightFrame = self.rightView.frame;
         rightFrame.origin.x = frame.size.width - rightFrame.size.width;
@@ -324,12 +324,12 @@ static NSInteger const WMBadgeViewTagOffset = 1212;
     frame.origin.x += self.contentMargin;
     frame.size.width -= self.contentMargin * 2;
     self.scrollView.frame = frame;
-    [self resetFramesFromIndex:0];
+    [self resetFramesFromIndex:0];//重置自身frame的值，计算frame内item的布局
 }
-
+//menu的item的frame设值
 - (void)resetFramesFromIndex:(NSInteger)index {
     [self.frames removeAllObjects];
-    [self calculateItemFrames];
+    [self calculateItemFrames];//就散Menu的scrollview的frame值
     for (NSInteger i = index; i < self.titlesCount; i++) {
         [self resetItemFrame:i];
         [self resetBadgeFrame:i];
@@ -347,7 +347,7 @@ static NSInteger const WMBadgeViewTagOffset = 1212;
     self.progressView.itemFrames = [self convertProgressWidthsToFrames];
     [self.progressView setNeedsDisplay];
 }
-
+//item的frame的设值
 - (void)resetItemFrame:(NSInteger)index {
     WMMenuItem *item = (WMMenuItem *)[self viewWithTag:(WMMenuItemTagOffset + index)];
     CGRect frame = [self.frames[index] CGRectValue];
@@ -434,9 +434,9 @@ static NSInteger const WMBadgeViewTagOffset = 1212;
     [self addSubview:scrollView];
     self.scrollView = scrollView;
 }
-
+//item的状态、细节设置，加入scrollView中
 - (void)addItems {
-    [self calculateItemFrames];
+    [self calculateItemFrames];//计算Menu的item的frame的值
     
     for (int i = 0; i < self.titlesCount; i++) {
         CGRect frame = [self.frames[i] CGRectValue];
@@ -447,11 +447,11 @@ static NSInteger const WMBadgeViewTagOffset = 1212;
         item.textAlignment = NSTextAlignmentCenter;
         item.userInteractionEnabled = YES;
         item.backgroundColor = [UIColor clearColor];
-        item.normalSize    = [self sizeForState:WMMenuItemStateNormal atIndex:i];
-        item.selectedSize  = [self sizeForState:WMMenuItemStateSelected atIndex:i];
+        item.normalSize    = [self sizeForState:WMMenuItemStateNormal atIndex:i];//normal状态下字体大小
+        item.selectedSize  = [self sizeForState:WMMenuItemStateSelected atIndex:i];//选中下字体大小
         item.normalColor   = [self colorForState:WMMenuItemStateNormal atIndex:i];
         item.selectedColor = [self colorForState:WMMenuItemStateSelected atIndex:i];
-        item.speedFactor   = self.speedFactor;
+        item.speedFactor   = self.speedFactor;//速度因数
         if (self.fontName) {
             item.font = [UIFont fontWithName:self.fontName size:item.selectedSize];
         } else {
@@ -473,11 +473,11 @@ static NSInteger const WMBadgeViewTagOffset = 1212;
 // 计算所有item的frame值，主要是为了适配所有item的宽度之和小于屏幕宽的情况
 // 这里与后面的 `-addItems` 做了重复的操作，并不是很合理
 - (void)calculateItemFrames {
-    CGFloat contentWidth = [self itemMarginAtIndex:0];
+    CGFloat contentWidth = [self itemMarginAtIndex:0];//contentWidth是Menu的宽度值
     for (int i = 0; i < self.titlesCount; i++) {
         CGFloat itemW = 60.0;
         if ([self.delegate respondsToSelector:@selector(menuView:widthForItemAtIndex:)]) {
-            itemW = [self.delegate menuView:self widthForItemAtIndex:i];
+            itemW = [self.delegate menuView:self widthForItemAtIndex:i];//title的字体宽度
         }
         CGRect frame = CGRectMake(contentWidth, 0, itemW, self.frame.size.height);
         // 记录frame
@@ -514,7 +514,7 @@ static NSInteger const WMBadgeViewTagOffset = 1212;
         }
         contentWidth = self.scrollView.frame.size.width;
     }
-    self.scrollView.contentSize = CGSizeMake(contentWidth, self.frame.size.height);
+    self.scrollView.contentSize = CGSizeMake(contentWidth, self.frame.size.height);//顶部导航栏的frame大小
 }
 
 - (CGFloat)itemMarginAtIndex:(NSInteger)index {
@@ -542,6 +542,7 @@ static NSInteger const WMBadgeViewTagOffset = 1212;
 
 #pragma mark - Menu item delegate
 - (void)didPressedMenuItem:(WMMenuItem *)menuItem {
+    //当前选的Item和现在Item是不是一样的
     if (self.selItem == menuItem) {
 //        llb_修改
         if ([self.delegate respondsToSelector:@selector(menuView:didSelesctedIndex:currentIndex:)]) {

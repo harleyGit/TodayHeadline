@@ -45,10 +45,11 @@
     [self configUI];
     @weakify(self)
     //execute 用于执行RACCommand: https://www.jianshu.com/p/1a0185782d8a
+    //获取15个滑动的标题，数据类型为：HNHomeTitleModel
     [[self.titleViewModel.titlesCommand execute:@13] subscribeNext:^(id  _Nullable x) {
         @strongify(self);
-        self.models = x;
-        [self reloadData];
+        self.models = x;//x为HNHomeTitleModel数组
+        [self reloadData];//获取数据，刷新布局以及UI赋值
         [self configPageVC];
     }];
     [bar setNavigationBarCallBack:^(HNNavigationBarAction action) {
@@ -115,7 +116,7 @@
     detial.model = model;
     return detial;
 }
-
+//获得Menu的item的title
 - (NSString *)pageController:(WMPageController *)pageController titleAtIndex:(NSInteger)index {
     if (index > self.models.count - 1) {
         return @"       ";

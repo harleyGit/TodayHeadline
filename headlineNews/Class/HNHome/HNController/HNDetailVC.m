@@ -131,7 +131,7 @@
     [super viewWillDisappear:animated];
     if (![self.model.category isEqualToString:@"video"]) return;
     [self.playerView resetPlayer];
-    NSArray *cells = [self.tableView visibleCells];
+    NSArray *cells = [self.tableView visibleCells];//获取tableView中可见的cell数组
     for (HNVideoCell *cell in cells) {
         if (cell.model.playing) {
             [cell refreshCellStatus];
@@ -142,6 +142,7 @@
 
 - (void)needRefreshTableViewData {
     [self.tableView setContentOffset:CGPointZero];
+    //马上进入刷新状态
     [self.tableView.mj_header beginRefreshing];
 }
 

@@ -180,11 +180,11 @@ static NSInteger const kWMControllerCountUndefined = -1;
 }
 
 - (void)reloadData {
-    [self wm_clearDatas];
+    [self wm_clearDatas];//相当于重置，避免干扰
     
     if (!self.childControllersCount) return;
     
-    [self wm_resetScrollView];
+    [self wm_resetScrollView];//对UI进行配置
     [self.memCache removeAllObjects];
     [self wm_resetMenuView];
     [self viewDidLayoutSubviews];
@@ -321,7 +321,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
     }
     return [[self.viewControllerClasses[index] alloc] init];
 }
-
+//获得Menu的item所在索引的title
 - (NSString * _Nonnull)titleAtIndex:(NSInteger)index {
     NSString *title = nil;
     if ([self.dataSource respondsToSelector:@selector(pageController:titleAtIndex:)]) {
@@ -338,8 +338,8 @@ static NSInteger const kWMControllerCountUndefined = -1;
     if (self.scrollView) {
         [self.scrollView removeFromSuperview];
     }
-    [self wm_addScrollView];
-    [self wm_addViewControllerAtIndex:self.selectIndex];
+    [self wm_addScrollView];//初始化ScrollView
+    [self wm_addViewControllerAtIndex:self.selectIndex];//selectIndex 设置选中几号
     self.currentViewController = self.displayVC[@(self.selectIndex)];
 }
 
@@ -347,22 +347,22 @@ static NSInteger const kWMControllerCountUndefined = -1;
     _controllerConut = kWMControllerCountUndefined;
     _hasInited = NO;
     NSUInteger maxIndex = (self.childControllersCount - 1 > 0) ? (self.childControllersCount - 1) : 0;
-    _selectIndex = self.selectIndex < self.childControllersCount ? self.selectIndex : (int)maxIndex;
-    if (self.progressWidth > 0) { self.progressWidth = self.progressWidth; }
+    _selectIndex = self.selectIndex < self.childControllersCount ? self.selectIndex : (int)maxIndex;//设置选中几号Item
+    if (self.progressWidth > 0) { self.progressWidth = self.progressWidth; }//设置进度条
     
-    NSArray *displayingViewControllers = self.displayVC.allValues;
+    NSArray *displayingViewControllers = self.displayVC.allValues;//displayVC是展示在屏幕上的控制器，方便在滚动的时候读取
     for (UIViewController *vc in displayingViewControllers) {
         [vc.view removeFromSuperview];
         [vc willMoveToParentViewController:nil];
         [vc removeFromParentViewController];
     }
-    self.memoryWarningCount = 0;
-    //取消已设置的延迟执行
+    self.memoryWarningCount = 0;//收到内存警告的次数
+    //取消已设置的延迟执行方法：https://blog.csdn.net/wmqi10/article/details/47754241
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(wm_growCachePolicyAfterMemoryWarning) object:nil];
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(wm_growCachePolicyToHigh) object:nil];
     self.currentViewController = nil;
-    [self.posRecords removeAllObjects];
-    [self.displayVC removeAllObjects];
+    [self.posRecords removeAllObjects];//posRecords用于记录销毁的viewController的位置
+    [self.displayVC removeAllObjects];//displayVC当前展示在屏幕上的控制器，方便在滚动的时候读取 (避免不必要计算)
 }
 
 // 当子控制器init完成时发送通知
@@ -427,7 +427,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
     CGFloat tarBarHeight = (self.hidesBottomBarWhenPushed == YES) ? 0 : height;
     // 计算相对 window 的绝对 frame (self.view.window 可能为 nil)
     UIWindow *mainWindow = [[UIApplication sharedApplication].delegate window];
-    //将rect从view中转换到当前视图中，返回在当前视图中的rect
+    //将rect由rect所在视图转换到目标视图view中，返回在目标视图view中的rect
     CGRect absoluteRect = [self.view convertRect:self.view.bounds toView:mainWindow];
     navigationHeight -= absoluteRect.origin.y;
     tarBarHeight -= mainWindow.frame.size.height - CGRectGetMaxY(absoluteRect);
@@ -449,7 +449,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
     _childViewFrames = [NSMutableArray array];
     for (int i = 0; i < self.childControllersCount; i++) {
         CGRect frame = CGRectMake(i*_viewWidth, 0, _viewWidth, _viewHeight);
-        [_childViewFrames addObject:[NSValue valueWithCGRect:frame]];
+        [_childViewFrames addObject:[NSValue valueWithCGRect:frame]];//NSValue可以包装任意一个对象，包括系统自定义的数据结构，结构体等等
     }
 }
 
@@ -486,8 +486,8 @@ static NSInteger const kWMControllerCountUndefined = -1;
     menuView.backgroundColor = self.menuBGColor;
     menuView.delegate = self;
     menuView.dataSource = self;
-    menuView.style = self.menuViewStyle;
-    menuView.layoutMode = self.menuViewLayoutMode;
+    menuView.style = self.menuViewStyle;//选中效果模式
+    menuView.layoutMode = self.menuViewLayoutMode;//Item布局模式
     menuView.progressHeight = self.progressHeight;
     menuView.contentMargin = self.menuViewContentMargin;
     menuView.progressViewBottomSpace = self.progressViewBottomSpace;
@@ -554,11 +554,13 @@ static NSInteger const kWMControllerCountUndefined = -1;
 // 创建并添加子控制器
 - (void)wm_addViewControllerAtIndex:(int)index {
     _initializedIndex = index;
+    //获得展示的UIViewController
     UIViewController *viewController = [self initializeViewControllerAtIndex:index];
     if (self.values.count == self.childControllersCount && self.keys.count == self.childControllersCount) {
         [viewController setValue:self.values[index] forKey:self.keys[index]];
     }
-    [self addChildViewController:viewController];
+    //完成父子视图关系建立
+    [self addChildViewController:viewController];//https://www.jianshu.com/p/2148f9cfa010
     CGRect frame = self.childViewFrames.count ? [self.childViewFrames[index] CGRectValue] : self.view.frame;
     viewController.view.frame = frame;
     //当从一个视图控制容器中添加或者移除viewController后，该方法被调用
@@ -661,7 +663,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
 
 - (void)wm_growCachePolicyAfterMemoryWarning {
     self.cachePolicy = WMPageControllerCachePolicyBalanced;
-    [self performSelector:@selector(wm_growCachePolicyToHigh) withObject:nil afterDelay:2.0 inModes:@[NSRunLoopCommonModes]];
+    [self performSelector:@selector(wm_growCachePolicyToHigh) withObject:nil afterDelay:2.0 inModes:@[NSRunLoopCommonModes]];//NSRunLoopCommonModes使用该模式可以防止UI的干扰：https://www.jianshu.com/p/360156006195
 }
 
 - (void)wm_growCachePolicyToHigh {
@@ -725,7 +727,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
     CGFloat menuWidth = _viewWidth - menuX - rightWidth;
     CGFloat oriWidth = self.menuView.frame.size.width;
     self.menuView.frame = CGRectMake(menuX, menuY, menuWidth, menuHeight);
-    [self.menuView resetFrames];
+    [self.menuView resetFrames];//计算menu的item的frame的值
     if (oriWidth != menuWidth) {
         [self.menuView refreshContenOffset];
     }
@@ -757,7 +759,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
     [self wm_addMenuView];
 }
 
-- (void)viewDidLayoutSubviews {
+- (void)viewDidLayoutSubviews {//控制器的view布局子控件完成
     [super viewDidLayoutSubviews];
     
     if (!self.childControllersCount) return;
@@ -772,7 +774,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
     // 计算宽高及子控制器的视图frame,也就是滚动视图的frame
     [self wm_calculateSize];
     //初始化scrollView中的view的位置
-    [self wm_adjustScrollViewFrame];
+    [self wm_adjustScrollViewFrame];//计算ScrollView的content的size
     [self wm_adjustMenuViewFrame];
     [self wm_adjustDisplayingViewControllersFrame];
     _hasInited = YES;
@@ -896,9 +898,9 @@ static NSInteger const kWMControllerCountUndefined = -1;
     [self wm_postFullyDisplayedNotificationWithCurrentIndex:(int)index];
     [self didEnterController:self.currentViewController atIndex:index];
 }
-
+//计算Menu计算item的title宽度
 - (CGFloat)menuView:(WMMenuView *)menu widthForItemAtIndex:(NSInteger)index {
-    if (self.automaticallyCalculatesItemWidths) {
+    if (self.automaticallyCalculatesItemWidths) {//通过Menu的计算item的title的宽度
         return [self wm_calculateItemWithAtIndex:index];
     }
     
@@ -907,14 +909,14 @@ static NSInteger const kWMControllerCountUndefined = -1;
     }
     return self.menuItemWidth;
 }
-
+//返回Menu每个item的宽度值
 - (CGFloat)menuView:(WMMenuView *)menu itemMarginAtIndex:(NSInteger)index {
     if (self.itemsMargins.count == self.childControllersCount + 1) {
         return [self.itemsMargins[index] floatValue];
     }
     return self.itemMargin;
 }
-
+//Menu的item在选中和未选中下的title的size大小
 - (CGFloat)menuView:(WMMenuView *)menu titleSizeForState:(WMMenuItemState)state atIndex:(NSInteger)index {
     switch (state) {
         case WMMenuItemStateSelected: {
@@ -927,7 +929,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
         }
     }
 }
-
+//Menu的item在选中和未选中下的title的color变化
 - (UIColor *)menuView:(WMMenuView *)menu titleColorForState:(WMMenuItemState)state atIndex:(NSInteger)index {
     switch (state) {
         case WMMenuItemStateSelected: {

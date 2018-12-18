@@ -13,7 +13,7 @@
 @implementation WMScrollView
 
 #pragma mark - <UIGestureRecognizerDelegate>
-
+//是否允许同时支持多个手势，默认是不支持多个手势
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
     // iOS横向滚动的scrollView和系统pop手势返回冲突的解决办法:     http://blog.csdn.net/hjaycee/article/details/49279951
     
@@ -35,6 +35,7 @@
     return NO;
 }
 
+//这个方法返回YES，第一个手势和第二个互斥时，第一个会失效:https://www.jianshu.com/p/015f851761e0
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRequireFailureOfGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
     //MARK: UITableViewCell 自定义手势需要自行定义
     if ([otherGestureRecognizer.view isKindOfClass:NSClassFromString(@"UITableViewWrapperView")] && [otherGestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]]) {

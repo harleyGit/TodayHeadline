@@ -27,7 +27,7 @@
     
     NSMutableArray *refreshingImages = [NSMutableArray array];
     for (NSUInteger i = 1; i< HNRefreshStateRefreshingImagesCount; i++) {
-        UIImage *image = [UIImage imageNamed:[NSString stringWithFormat:@"dropdown_loading_0%d", i]];
+        UIImage *image = [UIImage imageNamed:[NSString stringWithFormat:@"dropdown_loading_0%lu", (unsigned long)i]];
         [refreshingImages addObject:image];
     }
     [self setImages:refreshingImages forState:MJRefreshStateIdle];

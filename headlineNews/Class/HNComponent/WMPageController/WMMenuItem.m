@@ -54,7 +54,7 @@
     if (_link) {
         [_link invalidate];
     }
-    CADisplayLink *link = [CADisplayLink displayLinkWithTarget:self selector:@selector(rateChange)];
+    CADisplayLink *link = [CADisplayLink displayLinkWithTarget:self selector:@selector(rateChange)];//https://www.jianshu.com/p/0eeb21244caa,是一个能让我们以和屏幕刷新率相同的频率将内容画到屏幕上的定时器
     [link addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
     _link = link;
 }
@@ -74,7 +74,7 @@
     }
 }
 
-// 设置rate,并刷新标题状态
+// 设置rate,并刷新标题状态，按照一定的比例对其进行缩放
 - (void)setRate:(CGFloat)rate {
     if (rate < 0.0 || rate > 1.0) { return; }
     _rate = rate;
@@ -85,7 +85,7 @@
     self.textColor = [UIColor colorWithRed:r green:g blue:b alpha:a];
     CGFloat minScale = self.normalSize / self.selectedSize;
     CGFloat trueScale = minScale + (1 - minScale)*rate;
-    self.transform = CGAffineTransformMakeScale(trueScale, trueScale);
+    self.transform = CGAffineTransformMakeScale(trueScale, trueScale);//https://www.jianshu.com/p/0ee900339103,对这个View进行缩放
 }
 
 - (void)setSelectedColor:(UIColor *)selectedColor {
