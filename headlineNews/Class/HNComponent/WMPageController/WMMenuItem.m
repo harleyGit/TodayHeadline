@@ -25,7 +25,7 @@
         self.normalSize    = 15;
         self.selectedSize  = 18;
         self.numberOfLines = 0;
-        [self setupGestureRecognizer];
+        [self setupGestureRecognizer];//点击后的手势行为
     }
     return self;
 }
@@ -97,7 +97,7 @@
     _normalColor = normalColor;
     [normalColor getRed:&_normalRed green:&_normalGreen blue:&_normalBlue alpha:&_normalAlpha];
 }
-
+//代理执行点击后的Action
 - (void)touchUpInside:(id)sender {
     if ([self.delegate respondsToSelector:@selector(didPressedMenuItem:)]) {
         [self.delegate didPressedMenuItem:self];

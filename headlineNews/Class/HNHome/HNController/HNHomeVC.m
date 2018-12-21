@@ -54,7 +54,7 @@
     }];
     [bar setNavigationBarCallBack:^(HNNavigationBarAction action) {
         @strongify(self);
-        if (action != HNNavigationBarActionSend) {
+        if (action != HNNavigationBarActionSend) {//点击左边头像后的Action方法
             HNMineVC *mvc = [[HNMineVC alloc]init];
             [self.navigationController pushViewController:mvc animated:YES];
         }else {
@@ -94,7 +94,7 @@
 }
 
 #pragma mark - 需要刷新
-- (void)needRefreshTableViewData {
+- (void)needRefreshTableViewData {//刷新数据
     HNDetailVC *dvc = (HNDetailVC *)self.currentViewController;
     [dvc needRefreshTableViewData];
 }
@@ -126,6 +126,7 @@
     }
 }
 #pragma mark - WMMenuView 的代理方法
+//点击Menu上的Item触发的方法
 - (void)menuView:(WMMenuView *)menu didSelesctedIndex:(NSInteger)index currentIndex:(NSInteger)currentIndex {
     if (index == -1) {
         [self needRefreshTableViewData];

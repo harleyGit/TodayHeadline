@@ -27,7 +27,7 @@ static NSInteger const WMBadgeViewTagOffset = 1212;
     if (!self.superview) { return; }
     [self reload];
 }
-
+//Menu的frame值进行设置
 - (void)setFrame:(CGRect)frame {
     [super setFrame:frame];
     
@@ -64,7 +64,7 @@ static NSInteger const WMBadgeViewTagOffset = 1212;
     }
     
 }
-
+//设置进度视图的圆角bool值
 - (void)setProgressViewCornerRadius:(CGFloat)progressViewCornerRadius {
     _progressViewCornerRadius = progressViewCornerRadius;
     if (self.progressView) {
@@ -147,7 +147,7 @@ static NSInteger const WMBadgeViewTagOffset = 1212;
     }
     return [UIColor blackColor];
 }
-
+//Menu在Iitem选中和未选中下的title的size大小
 - (CGFloat)sizeForState:(WMMenuItemState)state atIndex:(NSInteger)index {
     if ([self.delegate respondsToSelector:@selector(menuView:titleSizeForState:atIndex:)]) {
         return [self.delegate menuView:self titleSizeForState:state atIndex:index];
@@ -155,6 +155,7 @@ static NSInteger const WMBadgeViewTagOffset = 1212;
     return 15.0;
 }
 
+//返回Menu上的角标
 - (UIView *)badgeViewAtIndex:(NSInteger)index {
     if (![self.dataSource respondsToSelector:@selector(menuView:badgeViewAtIndex:)]) {
         return nil;
@@ -169,11 +170,11 @@ static NSInteger const WMBadgeViewTagOffset = 1212;
 }
 
 #pragma mark - Public Methods
-
+//返回Menu上的Item
 - (WMMenuItem *)itemAtIndex:(NSInteger)index {
     return (WMMenuItem *)[self viewWithTag:(index + WMMenuItemTagOffset)];
 }
-
+//调皮效果的Bool值
 - (void)setProgressViewIsNaughty:(BOOL)progressViewIsNaughty {
     _progressViewIsNaughty = progressViewIsNaughty;
     if (self.progressView) {
@@ -181,6 +182,7 @@ static NSInteger const WMBadgeViewTagOffset = 1212;
     }
 }
 
+//移除原有的控件content，添加模式中的布局
 - (void)reload {
     [self.frames removeAllObjects];
     [self.progressView removeFromSuperview];
@@ -188,11 +190,11 @@ static NSInteger const WMBadgeViewTagOffset = 1212;
         [obj removeFromSuperview];
     }];
     
-    [self addItems];
-    [self makeStyle];
-    [self addBadgeViews];
+    [self addItems];//将items加入scrollView中
+    [self makeStyle];//根据模式当选中时的模式
+    [self addBadgeViews];//添加红色小点角标
 }
-
+//内容滑动时，对顶部导航栏的Item进行一定的缩放效果展示
 - (void)slideMenuAtProgress:(CGFloat)progress {
     if (self.progressView) {
         self.progressView.progress = progress;
@@ -208,7 +210,7 @@ static NSInteger const WMBadgeViewTagOffset = 1212;
         [self refreshContenOffset];
         return;
     }
-    currentItem.rate = 1-rate;
+    currentItem.rate = 1-rate;//对Menu的item进行一定的缩放效果展示
     nextItem.rate = rate;
 }
 
@@ -329,7 +331,7 @@ static NSInteger const WMBadgeViewTagOffset = 1212;
 //menu的item的frame设值
 - (void)resetFramesFromIndex:(NSInteger)index {
     [self.frames removeAllObjects];
-    [self calculateItemFrames];//就散Menu的scrollview的frame值
+    [self calculateItemFrames];//计算Menu的scrollview的frame值
     for (NSInteger i = index; i < self.titlesCount; i++) {
         [self resetItemFrame:i];
         [self resetBadgeFrame:i];
@@ -357,6 +359,7 @@ static NSInteger const WMBadgeViewTagOffset = 1212;
     }
 }
 
+//重置Menu上的提示角标
 - (void)resetBadgeFrame:(NSInteger)index {
     CGRect frame = [self.frames[index] CGRectValue];
     UIView *badgeView = [self.scrollView viewWithTag:(WMBadgeViewTagOffset + index)];
@@ -384,6 +387,7 @@ static NSInteger const WMBadgeViewTagOffset = 1212;
     return progressFrames.copy;
 }
 
+//添加角标视图
 - (void)addBadgeViews {
     for (int i = 0; i < self.titlesCount; i++) {
         [self addBadgeViewAtIndex:i];
@@ -397,6 +401,7 @@ static NSInteger const WMBadgeViewTagOffset = 1212;
     }
 }
 
+//根据模式定义选中时的效果
 - (void)makeStyle {
     CGRect frame = CGRectZero;
     if (self.style == WMMenuViewStyleDefault) { return; }
@@ -408,6 +413,7 @@ static NSInteger const WMBadgeViewTagOffset = 1212;
         frame = CGRectMake(0, (self.frame.size.height - self.progressHeight) / 2, self.scrollView.contentSize.width, self.progressHeight);
         self.progressViewCornerRadius = self.progressViewCornerRadius > 0 ? self.progressViewCornerRadius : self.progressHeight / 2.0;
     }
+    //根据模式定义不同选中时不同的效果
     [self addProgressViewWithFrame:frame
                         isTriangle:(self.style == WMMenuViewStyleTriangle)
                          hasBorder:(self.style == WMMenuViewStyleSegmented)
@@ -516,7 +522,7 @@ static NSInteger const WMBadgeViewTagOffset = 1212;
     }
     self.scrollView.contentSize = CGSizeMake(contentWidth, self.frame.size.height);//顶部导航栏的frame大小
 }
-
+//Item之间的间隙值
 - (CGFloat)itemMarginAtIndex:(NSInteger)index {
     if ([self.delegate respondsToSelector:@selector(menuView:itemMarginAtIndex:)]) {
         return [self.delegate menuView:self itemMarginAtIndex:index];
@@ -525,6 +531,7 @@ static NSInteger const WMBadgeViewTagOffset = 1212;
 }
 
 // MARK:Progress View
+//根据模式(WMMenuViewStyle)来定义选中不同时的效果
 - (void)addProgressViewWithFrame:(CGRect)frame isTriangle:(BOOL)isTriangle hasBorder:(BOOL)hasBorder hollow:(BOOL)isHollow cornerRadius:(CGFloat)cornerRadius {
     WMProgressView *pView = [[WMProgressView alloc] initWithFrame:frame];
     pView.itemFrames = [self convertProgressWidthsToFrames];
@@ -543,7 +550,7 @@ static NSInteger const WMBadgeViewTagOffset = 1212;
 #pragma mark - Menu item delegate
 - (void)didPressedMenuItem:(WMMenuItem *)menuItem {
     //当前选的Item和现在Item是不是一样的
-    if (self.selItem == menuItem) {
+    if (self.selItem == menuItem) {//当前选中的和以前选中的一样
 //        llb_修改
         if ([self.delegate respondsToSelector:@selector(menuView:didSelesctedIndex:currentIndex:)]) {
             [self.delegate menuView:self didSelesctedIndex:-1 currentIndex:-1];

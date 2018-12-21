@@ -139,9 +139,9 @@
         }
     }
 }
-
+//刷新数据
 - (void)needRefreshTableViewData {
-    [self.tableView setContentOffset:CGPointZero];
+    [self.tableView setContentOffset:CGPointZero];//contentOffset属性时tableView的内容视图相对于tableView在X、Y轴方向的偏移，当tableView向上滚动时contentOffset.y才是大于0的。当tableView向左滚动时contentOffset.x才是大于0的。
     //马上进入刷新状态
     [self.tableView.mj_header beginRefreshing];
 }

@@ -28,7 +28,7 @@ typedef NS_ENUM(NSInteger, WMPageControllerCachePolicy) {
     WMPageControllerCachePolicyHigh       = 5    // High
 };
 
-typedef NS_ENUM(NSUInteger, WMPageControllerPreloadPolicy) {
+typedef NS_ENUM(NSUInteger, WMPageControllerPreloadPolicy) {//预加载策略
     WMPageControllerPreloadPolicyNever     = 0, // Never pre-load controller.
     WMPageControllerPreloadPolicyNeighbour = 1, // Pre-load the controller next to the current.
     WMPageControllerPreloadPolicyNear      = 2  // Pre-load 2 controllers near the current.
@@ -93,7 +93,7 @@ extern NSString *const WMControllerDidFullyDisplayedNotification;
 - (void)pageController:(WMPageController *)pageController willCachedViewController:(__kindof UIViewController *)viewController withInfo:(NSDictionary *)info;
 
 /**
- *  Called when a viewController will be appear to user's sight. Do some preparatory methods if needed.
+ *  Called when a viewController will be appear to user's sight. Do some preparatory methods if needed.(当控制器出现在使用者视野时，做一些准备的时候调用)
  *
  *  @param pageController The parent controller (WMPageController)
  *  @param viewController The viewController will appear.
@@ -112,7 +112,7 @@ extern NSString *const WMControllerDidFullyDisplayedNotification;
 
 @end
 
-@interface WMPageController : HNBaseViewController <WMMenuViewDelegate, WMMenuViewDataSource, UIScrollViewDelegate, WMPageControllerDataSource, WMPageControllerDelegate>
+@interface WMPageController :                                                           HNBaseViewController <WMMenuViewDelegate, WMMenuViewDataSource, UIScrollViewDelegate, WMPageControllerDataSource, WMPageControllerDelegate>
 
 @property (nonatomic, weak) id<WMPageControllerDelegate> delegate;
 @property (nonatomic, weak) id<WMPageControllerDataSource> dataSource;

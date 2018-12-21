@@ -507,7 +507,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
     }
     self.menuView = menuView;
 }
-
+//移除或者添加视图控制器
 - (void)wm_layoutChildViewControllers {
     int currentPage = (int)(self.scrollView.contentOffset.x / _viewWidth);
     int length = (int)self.preloadPolicy;
@@ -518,11 +518,11 @@ static NSInteger const kWMControllerCountUndefined = -1;
         CGRect frame = [self.childViewFrames[i] CGRectValue];
         if (!vc) {
             if ([self wm_isInScreen:frame]) {
-                [self wm_initializedControllerWithIndexIfNeeded:i];
+                [self wm_initializedControllerWithIndexIfNeeded:i];//创建或从缓存中获取控制器并添加到视图上
             }
         } else if (i <= left || i >= right) {
             if (![self wm_isInScreen:frame]) {
-                [self wm_removeViewController:vc atIndex:i];
+                [self wm_removeViewController:vc atIndex:i];//移除视图控制器
             }
         }
     }
@@ -541,7 +541,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
     }
     [self wm_postAddToSuperViewNotificationWithIndex:(int)index];
 }
-
+//添加视图控制器
 - (void)wm_addCachedViewController:(UIViewController *)viewController atIndex:(NSInteger)index {
     [self addChildViewController:viewController];
     viewController.view.frame = [self.childViewFrames[index] CGRectValue];
@@ -633,7 +633,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
     }
     return scrollView;
 }
-
+//当前的View将显示出来
 - (BOOL)wm_isInScreen:(CGRect)frame {
     CGFloat x = frame.origin.x;
     CGFloat ScreenWidth = self.scrollView.frame.size.width;
@@ -881,6 +881,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
 }
 
 #pragma mark - WMMenuView Delegate
+//点击Menu上的Item触发的方法
 - (void)menuView:(WMMenuView *)menu didSelesctedIndex:(NSInteger)index currentIndex:(NSInteger)currentIndex {
     if (!_hasInited) return;
     _selectIndex = (int)index;

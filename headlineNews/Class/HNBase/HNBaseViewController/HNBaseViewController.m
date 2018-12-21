@@ -21,7 +21,7 @@
 }
 
 #pragma mark 导航栏相关
-
+//自定义带图片的item
 - (UIBarButtonItem *)createItemWithImageName: (NSString *)imageName Selector:(SEL)selector{
     
     UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:imageName]];
@@ -33,6 +33,7 @@
     return item;
 }
 
+//自定义带文字的item
 - (UIBarButtonItem *)createItemWithText: (NSString *)text Selector:(SEL)selector{
     UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithTitle:text style:UIBarButtonItemStylePlain target:self action:selector];
     return item;

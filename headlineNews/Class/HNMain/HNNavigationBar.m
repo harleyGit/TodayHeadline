@@ -36,11 +36,12 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
+        //左边头像按钮
         HNActionImageView *mineImageView = [[HNActionImageView alloc]init];
         mineImageView.image = [UIImage imageNamed:@"home_no_login_head"];
         [self addSubview:mineImageView];
         @weakify(self);
-        [mineImageView setImageClickBlock:^{
+        [mineImageView setImageClickBlock:^{//点击图片后的Action行为
             @strongify(self);
             if (self.navigationBarCallBack) {
                 self.navigationBarCallBack(HNNavigationBarActionMine);
@@ -63,7 +64,7 @@
         searchBar.backgroundColor = [UIColor whiteColor];
         UIImageView *leftView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 20, 20)];
         leftView.image = [UIImage imageNamed:@"searchicon_search_20x20_"];
-        searchBar.leftView = leftView;
+        searchBar.leftView = leftView;//自定义搜索款，左边的放大镜图片，leftview和rightview，这两个属性分别能设置textField内的左右两边的视图
         searchBar.delegate = self;
         searchBar.text = @"搜你想搜的";
         searchBar.textColor = [UIColor grayColor];
@@ -105,14 +106,14 @@
 }
 // 重写适配11
 //指定位置后不需设置大小，系统自动调用该方法，使用其size
-- (CGSize)intrinsicContentSize {
+- (CGSize)intrinsicContentSize {//指控件的内置大小，控件的内置大小往往是由控件本身的内容所决定的，比如一个UILabel的文字很长，那么该UILabel的内置大小自然会很长。设置初始时view的size大小：https://www.jianshu.com/p/3d41981e2282，https://blog.csdn.net/hard_man/article/details/50888377
     return CGSizeMake(HN_SCREEN_WIDTH - 24, 44.f);
 }
 @end
 
 @implementation HNSearchBar
-//设置leftView，搜索框左边图片的位置
-- (CGRect)leftViewRectForBounds:(CGRect)bounds {
+//设置leftView，搜索框左边(人物头像距离左边的位置)图片的位置
+- (CGRect)leftViewRectForBounds:(CGRect)bounds {//https://www.jianshu.com/p/f93b005dc9d4
     
     CGRect iconRect = [super leftViewRectForBounds:bounds];
     iconRect.origin.x += 8;
@@ -131,7 +132,7 @@
 }
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     if (self.imageClickBlock) {
-        self.imageClickBlock();
+        self.imageClickBlock();//点击图片后触发的行为，很睿智
     }
 }
 @end
