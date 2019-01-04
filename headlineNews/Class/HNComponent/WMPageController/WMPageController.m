@@ -61,7 +61,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
 
 - (instancetype)initWithViewControllerClasses:(NSArray<Class> *)classes andTheirTitles:(NSArray<NSString *> *)titles {
     if (self = [super init]) {
-        NSParameterAssert(classes.count == titles.count);
+        NSParameterAssert(classes.count == titles.count);//断言报错
         _viewControllerClasses = [NSArray arrayWithArray:classes];
         _titles = [NSArray arrayWithArray:titles];
 
@@ -83,7 +83,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
     }
     return self;
 }
-
+//指定边缘要延伸的方向，它的默认值很自然地是UIRectEdgeAll，四周边缘均延伸，就是说，如果即使视图中上有navigationBar，下有tabBar，那么视图仍会延伸覆盖到四周的区域。
 - (void)setEdgesForExtendedLayout:(UIRectEdge)edgesForExtendedLayout {
     if (self.edgesForExtendedLayout == edgesForExtendedLayout) return;
     [super setEdgesForExtendedLayout:edgesForExtendedLayout];
@@ -248,7 +248,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
 }
 
 #pragma mark - Delegate
-- (NSDictionary *)infoWithIndex:(NSInteger)index {
+- (NSDictionary *)infoWithIndex:(NSInteger)index {//Menu对应的索引和title键值对
     NSString *title = [self titleAtIndex:index];
     return @{@"title": title ? title : @"", @"index": @(index)};
 }
@@ -304,7 +304,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
 }
 
 #pragma mark - Data source
-- (NSInteger)childControllersCount {
+- (NSInteger)childControllersCount {//返回controller的数目
     if (_controllerConut == kWMControllerCountUndefined) {
         if ([self.dataSource respondsToSelector:@selector(numbersOfChildControllersInPageController:)]) {
             _controllerConut = [self.dataSource numbersOfChildControllersInPageController:self];
@@ -314,7 +314,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
     }
     return _controllerConut;
 }
-
+//返回展示的controller，并携带数据model
 - (UIViewController * _Nonnull)initializeViewControllerAtIndex:(NSInteger)index {
     if ([self.dataSource respondsToSelector:@selector(pageController:viewControllerAtIndex:)]) {
         return [self.dataSource pageController:self viewControllerAtIndex:index];
@@ -342,7 +342,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
     [self wm_addViewControllerAtIndex:self.selectIndex];//selectIndex 设置选中几号
     self.currentViewController = self.displayVC[@(self.selectIndex)];
 }
-
+//清除数据
 - (void)wm_clearDatas {
     _controllerConut = kWMControllerCountUndefined;
     _hasInited = NO;
@@ -406,7 +406,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
     _scrollEnable = YES;
     
     self.automaticallyCalculatesItemWidths = NO;
-    self.automaticallyAdjustsScrollViewInsets = NO;
+    self.automaticallyAdjustsScrollViewInsets = NO;//禁用掉自动设置的内边距，自行控制controller上index为0的控件以及scrollview控件的位置
     self.preloadPolicy = WMPageControllerPreloadPolicyNever;
     self.cachePolicy = WMPageControllerCachePolicyNoLimit;
     
@@ -468,6 +468,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
     self.scrollView = scrollView;
     
     if (!self.navigationController) return;
+    //解决：UINavigationController的侧滑手势与UIScrollView滚动手势冲突
     for (UIGestureRecognizer *gestureRecognizer in scrollView.gestureRecognizers) {
         [gestureRecognizer requireGestureRecognizerToFail:self.navigationController.interactivePopGestureRecognizer];
     }
@@ -675,7 +676,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
 }
 
 #pragma mark - Adjust Frame
-- (void)wm_adjustScrollViewFrame {
+- (void)wm_adjustScrollViewFrame {//scrollView的frame、contentSize、contentOffset计算
     // While rotate at last page, set scroll frame will call `-scrollViewDidScroll:` delegate
     // It's not my expectation, so I use `_shouldNotScroll` to lock it.
     // Wait for a better solution.
@@ -690,7 +691,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
     [self.scrollView setContentOffset:CGPointMake(xContentOffset, 0)];
     _shouldNotScroll = NO;
 }
-
+//UIViewController 的frame值设置
 - (void)wm_adjustDisplayingViewControllersFrame {
     [self.displayVC enumerateKeysAndObjectsUsingBlock:^(NSNumber * _Nonnull key, UIViewController * _Nonnull vc, BOOL * _Nonnull stop) {
         NSInteger index = key.integerValue;
@@ -733,6 +734,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
     }
 }
 
+//根据Item的title计算Menu的Item的title的宽度
 - (CGFloat)wm_calculateItemWithAtIndex:(NSInteger)index {
     NSString *title = [self titleAtIndex:index];
     UIFont *titleFont = self.titleFontName ? [UIFont fontWithName:self.titleFontName size:self.titleSizeSelected] : [UIFont systemFontOfSize:self.titleSizeSelected];
